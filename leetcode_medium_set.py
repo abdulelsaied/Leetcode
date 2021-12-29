@@ -1,3 +1,13 @@
+from collections import defaultdict
+
+"""
+Notes:
+- build-in python sort has a runtime of O(NlogN), and O(logn) space due to recursive calls by QuickSort
+- ord(char) - ord('a') gives the number of letters after "a" a letter is, in lowercase.
+- tuple("hey") = ("h", "e", "y")
+
+"""
+
 def three_sum(nums):
     """ Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
@@ -29,7 +39,7 @@ def three_sum(nums):
     length = len(nums)
     if length < 3:
         return result
-    nums.sort() ## nlogn time, logn space for quicksort
+    nums.sort() 
     for i in range(length):
         element = nums[i]
         if element > 0:
@@ -101,3 +111,25 @@ def set_zeroes(matrix) -> None:
 ###########################################################################################################################
 ###########################################################################################################################
 
+def groupAnagrams(strs):
+    """ Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+    Approach 1: 
+    - Sort each of the strings, and use that as a key in a hashtable. 
+    - Return values of hashtable
+    - Runtime: O(NKlogK), where K is the length of the longest string
+    - Space: O(NK)
+
+    Approach 2: 
+    - Keep a count of each letter instance for each string, and use that as a key in a hashtable
+    - Return values of hashtable
+    - Runtime: O(NK), since we aren't sorting the strings anymore
+    - Space: O(NK)
+    """
+    ans = defaultdict(list)
+    for word in strs:
+        counts = [0] * 26
+        for char in word:
+            counts[ord(char) - ord('a')] += 1
+        ans[tuple(counts)].append(word)
+    return ans.values()
