@@ -5,6 +5,7 @@ Notes:
 - build-in python sort has a runtime of O(NlogN), and O(logn) space due to recursive calls by QuickSort
 - ord(char) - ord('a') gives the number of letters after "a" a letter is, in lowercase.
 - tuple("hey") = ("h", "e", "y")
+- O(n^2) substrings of a string of length n 
 
 """
 
@@ -111,7 +112,7 @@ def set_zeroes(matrix) -> None:
 ###########################################################################################################################
 ###########################################################################################################################
 
-def groupAnagrams(strs):
+def group_anagrams(strs):
     """ Given an array of strings strs, group the anagrams together. You can return the answer in any order.
 
     Approach 1: 
@@ -133,3 +134,43 @@ def groupAnagrams(strs):
             counts[ord(char) - ord('a')] += 1
         ans[tuple(counts)].append(word)
     return ans.values()
+
+###########################################################################################################################
+###########################################################################################################################
+
+def longest_substring_no_duplicates(s):
+    """ Given a string s, find the length of the longest substring without repeating characters.
+
+    Approach 1: (brute force)
+    - For all O(n^2) substrings, check if there are no matching characters
+    - Runtime: O(n^3) 
+    - Space: O(min(m, n)) where m, n are the size of the string and character set
+
+    Approach 2: 
+    - Sliding window technique with 2 pointers
+    - Maintain a set initialized to [0] * len(charset)
+    - If the next letter is already in the set, move left pointer
+    - Runtime: O(2n) = O(n)
+    - Space: O(min(m, n)) - size of the set is upper bounded by size of string and charset
+
+    Approach 3 (⭐):
+    - Similar to sliding window, but maintain a map of chars to indices 
+    - Instead of moving left pointer one-by-one, jump it straight to the index right after the index listed in the map
+    - Runtime: O(n)
+    - Space: O(min(n, m))
+    """
+    chars = [0] * 128
+    i = 0
+    j = 0 
+    res = 0 
+    while i < len(s):
+        chars[ord(s[i])] += 1 # add s[i] to the set
+        while chars[ord(s[i])] > 1: # if s[i] was already in the set -> duplicate
+            chars[ord(s[j])] -= 1
+            j += 1
+        res = max(res, i - j + 1)
+        i += 1
+    return res
+
+
+
