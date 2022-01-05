@@ -182,6 +182,20 @@ def longest_palindrome(s):
     - Choose all possible start/end pairs, and check if they are palindromes
     - Runtime: O(n^3)
     - Space: O(1)
+
+    Approach 2: 
+    - Find the longest common substring between S and S', where S' is the reverse of S
+    - Check if the indices of both substrings are the same to avoid the case where the palindrome is invalid
+    - Runtime: O(n^2)
+    - Space: O(n^2)
+
+    Approach 3 (⭐): 
+    - Expand around all the 2n - 1 possible centers of the string
+    - For each center, validate that the center is a palindrome (trivial if center is 1 char, 1 comparison if its 2 chars)
+    - Expand the left and right by only comparing the outermost chars
+    - Maintain max start/end indices used to slice the string in the end
+    - Runtime; O(n^2)
+    - Space: O(1)
     """
     if len(s) < 1:
         return ""
@@ -202,5 +216,28 @@ def expandCenter(s, left, right):
         right += 1
     return right - left - 1
 
+###########################################################################################################################
+###########################################################################################################################
 
+def increasing_triplet(nums):
+    """ Given an integer array nums, return true if there exists a triple of indices (i, j, k) such that i < j < k and nums[i] < nums[j] < nums[k].
 
+    Approach 1 (⭐):
+    - Keep track of instances where you see the first and second numbers of a sequence. 
+    - If you ever come across a number larger than the previous first and second numbers, there must be an increasing triplet
+    - The value of first when returning True may be inaccurate; maintain a placeholder for prev_first if you need to return triplet
+    - Runtime: O(n)
+    - Space: O(1)
+
+    """
+    first = float("inf")
+    second = float("inf")
+    for n in nums:
+        if n <= first:
+            first = n 
+        elif n <= second: 
+            second = n 
+        else:
+            return True
+    return False
+        
