@@ -228,7 +228,6 @@ def increasing_triplet(nums):
     - The value of first when returning True may be inaccurate; maintain a placeholder for prev_first if you need to return triplet
     - Runtime: O(n)
     - Space: O(1)
-
     """
     first = float("inf")
     second = float("inf")
@@ -241,3 +240,25 @@ def increasing_triplet(nums):
             return True
     return False
         
+###########################################################################################################################
+###########################################################################################################################
+
+def find_missing_ranges(nums, lower, upper):
+    """ Return the smallest sorted list of ranges that cover every missing number exactly. That is, no element of nums is in any of the ranges, and each missing number is in one of the ranges.
+
+    - Approach 1 (⭐):
+    - Do a linear scan of nums, appening lower - 1 and upper + 1 to the ends
+    - Format depends on value of difference between consecutive elements
+    - Runtime: O(n)
+    - Space: O(1)
+    """
+    res = []
+    new_arr = [lower - 1] + nums + [upper + 1]
+    for i in range(len(new_arr) - 1):
+        diff = new_arr[i + 1] - new_arr[i]
+        if diff == 2:
+            res.append(str(new_arr[i] + 1))
+        elif diff > 2: 
+            res.append(str(new_arr[i] + 1) + "->" + str(new_arr[i + 1] - 1))
+    return res
+    
