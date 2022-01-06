@@ -313,3 +313,30 @@ def add_two_numbers(l1, l2):
         if min_ptr:
             min_ptr = min_ptr.next
     return l1 if first_len >= second_len else l2
+
+###########################################################################################################################
+###########################################################################################################################
+
+def odd_even_list(head):
+    """ Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list.
+
+    - Approach 1 (⭐):
+    - Put all odd nodes in one LL and the even in another, then link them in the end
+    - To do this in-place, rewire the nodes in pairs rather than using new LL's 
+    - Each linked list should have a head and tail pointer, with tail pointer acting as the iterator
+    - Runtime: O(n)
+    - Space: O(1)
+    """
+    if head is None:
+        return head
+    even = head.next
+    evenHead = even
+    odd = head
+    while even and even.next:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    odd.next = evenHead
+    return head
+
