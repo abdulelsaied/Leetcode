@@ -340,3 +340,37 @@ def odd_even_list(head):
     odd.next = evenHead
     return head
 
+###########################################################################################################################
+###########################################################################################################################
+
+def getIntersectionNode(headA, headB):
+    """ Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. 
+
+    - Approach 1 (brute force):
+    - For each node in headA, check all nodes in headB for a match
+    - Runtime: O(M x N)
+    - Space: O(1)
+
+    - Approach 2:
+    - Traverse B and store the nodes in a hash table. 
+    - Iterate over A and check for matches in the table
+    - Runtime: O(M + N)
+    - Space: O(max(M, n)) (depends on which LL we choose to hash)
+
+    - Approach 3 (⭐): 
+    - Find the lengths of both LL's --> O(m + n)
+    - Set a pointer to start at the first possible point an intersection can occur based on the length of the shorter LL
+    - Now, iterate over both LL's and pairwise-compare.
+    - EXTRA: traverse both LL's at the same time, jumping to the next LL when first one is traversed
+    - a + c + b = b + c + a
+    - By the time they meet, it will either be at the point of intersection or when both are null, since the length of both paths are the same
+    - Runtime: O(M + M)
+    - Space: O(1)
+    """
+    a_ptr = headA
+    b_ptr = headB
+    while a_ptr != b_ptr:
+        a_ptr = headB if not a_ptr else a_ptr.next
+        b_ptr = headA if not b_ptr else b_ptr.next
+    return a_ptr
+
