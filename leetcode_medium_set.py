@@ -262,3 +262,54 @@ def find_missing_ranges(nums, lower, upper):
             res.append(str(new_arr[i] + 1) + "->" + str(new_arr[i + 1] - 1))
     return res
     
+###########################################################################################################################
+###########################################################################################################################
+
+def add_two_numbers(l1, l2):
+    """ The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+
+    - Approach 1: 
+    - Maintain a carry variable and perform addition from left to right, adding values to a new LL
+    - Runtime: O(n)
+    - Space: O(1)
+
+    - Approach 2 (⭐):
+    - Use the longer LL as the result
+    - First, find the longest LL (O(n))
+    - Perform addition from left to right. 
+    - Make sure to account for the case where LL end is reached and carry == 1
+    - Runtime: O(n)
+    - Space: O(1)
+    """
+    first_len = 0
+    second_len = 0 
+    first_ptr = l1
+    second_ptr = l2
+    while first_ptr != None:
+        first_len += 1 
+        first_ptr = first_ptr.next
+    while second_ptr != None:
+        second_len += 1
+        second_ptr = second_ptr.next
+    if first_len >= second_len:
+        max_ptr = l1
+        min_ptr = l2
+    else: 
+        max_ptr = l2
+        min_ptr = l1
+    carry = 0 
+    while max_ptr != None:
+        val = max_ptr.val + min_ptr.val if min_ptr else max_ptr.val
+        if val + carry > 9:
+            max_ptr.val = (val + carry) % 10
+            carry = 1
+        else:
+            max_ptr.val = val + carry
+            carry = 0 
+        if max_ptr.next == None and carry == 1:
+            max_ptr.next = ListNode(1, None)
+            carry = 0
+        max_ptr = max_ptr.next
+        if min_ptr:
+            min_ptr = min_ptr.next
+    return l1 if first_len >= second_len else l2
