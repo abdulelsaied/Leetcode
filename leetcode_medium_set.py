@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 
 """
 Notes:
@@ -6,6 +6,9 @@ Notes:
 - ord(char) - ord('a') gives the number of letters after "a" a letter is, in lowercase.
 - tuple("hey") = ("h", "e", "y")
 - O(n^2) substrings of a string of length n 
+- BT Inorder Traversal - left, root, right
+- BT Preorder Traversal - root, left, right
+- BT Postorder Traversal - left, right, root
 
 """
 
@@ -343,7 +346,7 @@ def odd_even_list(head):
 ###########################################################################################################################
 ###########################################################################################################################
 
-def getIntersectionNode(headA, headB):
+def get_intersection_node(headA, headB):
     """ Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. 
 
     - Approach 1 (brute force):
@@ -373,4 +376,138 @@ def getIntersectionNode(headA, headB):
         a_ptr = headB if not a_ptr else a_ptr.next
         b_ptr = headA if not b_ptr else b_ptr.next
     return a_ptr
+
+###########################################################################################################################
+###########################################################################################################################
+
+def inorder_raversal(root):
+    """ Given the root of a binary tree, return the inorder traversal of its nodes' values.
+
+    - Inorder Traversal: left, root, right
+
+    - Approach 1 (recursive):
+    - Base case: root is null -> return []
+    - [left] + [root] + [right]
+    - Runtime: O(n)
+    - Space: O(n)
+
+    - Approach 2 (⭐):
+    - To perform a recursive task iteratively, utilize a stack
+    - First add all left nodes on far left. 
+    - Continously pop off stack, going right at the end and searching far left if possible
+    - Runtime: O(n)
+    - Space: O(n)
+    """
+    res = []
+    stack = []
+    curr = root
+    while curr or len(stack) > 0:
+        while curr:
+            stack.append(curr)
+            curr = curr.left
+        curr = stack.pop()
+        res.append(curr.val)
+        curr = curr.right
+    return res
+
+###########################################################################################################################
+###########################################################################################################################
+
+def zigzag_level_order(root):
+    """ Given the root of a binary tree, return the zigzag level order traversal of its nodes' values. (i.e., from left to right, then right to left for the next level and alternate between).
+
+    - Approach 1 (⭐) BFS:
+    - Maintain a deque and add nodes in level-order fashion. 
+    - Maintain a second deque that contains the nodes for 1 level in the order needed for that specific level
+    - Runtime: O(n)
+    - Space: O(n)
+    """
+    ret = []
+    level_list = deque()
+    if not root:
+        return ret
+    node_queue = deque([root, None])
+    is_order_left = True
+    while node_queue:
+        curr_node = node_queue.popleft()
+        if curr_node:
+            if is_order_left:
+                level_list.append(curr_node.val)
+            else:
+                level_list.appendleft(curr_node.val)
+            if curr_node.left:
+                node_queue.append(curr_node.left)
+            if curr_node.right:
+                node_queue.append(curr_node.right)
+        else:
+            ret.append(level_list)
+            if node_queue:   
+                node_queue.append(None)
+            level_list = deque()
+            is_order_left = not is_order_left
+    return ret
+
+###########################################################################################################################
+###########################################################################################################################
+
+def build_tree(preorder, inorder):
+    """ Given two integer arrays preorder and inorder where preorder is the preorder traversal of a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.
+
+    - Approach 1 (⭐):
+    - Notice that the preorder array always contains the root of the tree as it's first element
+    - Notice that the inorder array always contains left/right subtree on the left/right side of root found in preorder. 
+    - So, you can construct the tree recursively by using the first element of preorder, finding it in inorder, and building the tree from there. 
+    - Can map values in inorder so that searching for preorder[0] in inorder is O(1)
+    - Runtime: O(n)
+    - Space: O(n)
+    """
+    preorder_index = 0
+    inorder_index_map = {}
+    for index, value in enumerate(inorder):
+        inorder_index_map[value] = index
+    def array_to_tree(left, right):
+        nonlocal preorder_index
+        if left > right: 
+            return None
+        root_value = preorder[preorder_index]
+        root = TreeNode(root_value)
+        preorder_index += 1
+        root.left = array_to_tree(left, inorder_index_map[root_value] - 1)
+        root.right = array_to_tree(inorder_index_map[root_value] + 1, right)
+        return root
+    return array_to_tree(0, len(preorder) - 1)
+
+###########################################################################################################################
+###########################################################################################################################
+
+def connect(root):
+    """ You are given a perfect binary tree where all leaves are on the same level, and every parent has two children. Populate each next pointer to point to its next right node.
+
+    - Approach 1: 
+    - Traverse the tree in level order, maintaining a queue that stores the nodes of each level. 
+    - When we pop a node from the queue, set it's next to the next item in the queue if its not at the end of the level
+    - Runtime: O(n)
+    - Space: O(n)
+
+    - Approach 2 (⭐):
+    - Notice that there are two types of connections: left pointing to its right sibling, or right pointing to the left of its parent's sibling. 
+    - Each case can be handled one level in advance
+    - Runtime: O(n)
+    - Space: O(1)
+    """
+    if not root:
+        return None
+    leftmost = root
+    while leftmost.left:
+        head = leftmost
+        while head:
+            head.left.next = head.right
+            if head.next:
+                head.right.next = head.next.left
+            head = head.next
+        leftmost = leftmost.left
+    return root
+
+###########################################################################################################################
+###########################################################################################################################
 
