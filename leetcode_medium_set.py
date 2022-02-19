@@ -9,6 +9,7 @@ Notes:
 - BT Inorder Traversal - left, root, right
 - BT Preorder Traversal - root, left, right
 - BT Postorder Traversal - left, right, root
+- "".join(str_array) converts an array of characters into a string
 
 """
 
@@ -511,3 +512,265 @@ def connect(root):
 ###########################################################################################################################
 ###########################################################################################################################
 
+def kth_smallest(root, k):
+    """ Given the root of a binary search tree, and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+
+    - Approach 1 (⭐):
+    - For a BST, the inorder traversal returns the nodes in ascending order. 
+    - So, do the inorder traversal, stopping at the kth iteration. 
+    - Runtime: O(H + k) - H is the height
+    - Space: O(H)
+    """
+    stack = []
+    while True:
+        while root:
+            stack.append(root)
+            root = root.left
+        root = stack.pop()
+        k -= 1
+        if not k:
+            return root.val
+        root = root.right
+
+###########################################################################################################################
+###########################################################################################################################
+
+def inorder_successor(root, p):
+    """ Given the root of a binary search tree and a node p in it, return the in-order successor of that node in the BST.
+
+    - Approach 1: 
+    - Using node p, there are two possibilites for where the inorder successor could be. 
+    - If p has a right child, the successor is the leftmost node rooted at the right child
+    - If p doesn't have a right child, run inorder traversal as normal and return successor
+    - Runtime: O(n)
+    - Space: O(n)
+
+    - Approach 2 (⭐):
+    - Using BST properties, we can decide which subtree the successor is from a comparison with the root. 
+    - If p's val is less than the root, the successor is either the root or in the left subtree
+    - If p's val is greater or equal to the root, the successor is in the subtree, but can't be the root. 
+    - Runtime: O(N) if not balanced, O(logN) if balanced.
+    - Space: O(1)
+    """
+    successor = None
+    while root:
+        if p.val >= root.val:
+            root = root.right
+        else:
+            successor = root
+            root = root.left
+    return successor
+
+###########################################################################################################################
+###########################################################################################################################
+
+def num_islands(grid):
+    """ Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+
+    - Approach 1 BFS (⭐):
+    - Iterate over all elements in the grid
+    - If you encounter a "1", run BFS on it by adding to a queue, and adding all of its neighbors to the queue until the queue is empty
+    - When we pop a node from the queue, set it to 0
+    - Runtime: O(M x N)
+    - Space: O(min(M, N)
+
+    - Approach 2 DFS:
+    - Iterate over all elements in the grid
+    - If you encounter a "1", run DFS on it and mark all of its neighbors as "0", or set visited array if you can't modify input
+    - Return count
+    - Runtime: O(M x N)
+    - Space: O(M x N)
+    """
+    count = 0 
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == "1":
+                count += 1
+                print(i, j)
+                visit_island(grid, i, j)
+    return count
+    
+def visit_island(grid, i, j):
+    grid[i][j] = "0"
+    offsets = ((0, 1), (1, 0), (0, -1), (-1, 0))
+    for di, dj in offsets:
+        new_i = i + di
+        new_j = j + dj
+        if 0 <= new_i < len(grid) and 0 <= new_j < len(grid[0]) and grid[new_i][new_j] == "1":
+            visit_island(grid, new_i, new_j)
+
+###########################################################################################################################
+###########################################################################################################################
+
+def letter_combinations(digits):
+    """ Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.
+
+    - Approach 1 (⭐):
+    - Follows the standard backtracking template
+    - Starting with the first letter of digits, add all possible numbers of that digit to path, backtrack, then pop from path
+    - Runtime: O(4^N * N)
+    - Space: O(N) - at most N frames on the recursive stack at a time.
+    """
+    if not digits: 
+        return []
+    letters = {"2": "abc", "3": "def", "4": "ghi", "5": "jkl", 
+                "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"}
+    def backtrack(index, path):
+        if len(path) == len(digits):
+            combinations.append("".join(path))
+            return
+        possible_letters = letters[digits[index]]
+        for letter in possible_letters:
+            path.append(letter)
+            backtrack(index + 1, path)
+            path.pop()
+    combinations = []
+    backtrack(0, [])
+    return combinations
+
+###########################################################################################################################
+###########################################################################################################################
+
+def generate_parenthesis(n):
+    """ Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+    - Approach 1:
+    - Brute force; find all the 2^2n sequences of parentheses, then validate them.
+    - Runtime: O((2^2n)*n)
+    - Space: O((2^2n)*n)
+
+    - Approach 2 (⭐):
+    - Use backtracking approach
+    - Maintain a count of left and right paren between recursive calls
+    - If there are less than n left paren, we can add one, backtrack, and pop
+    - If there are less right paren than left, we can add one, backtrack, and pop
+    - Once the sequence is 6 chars, we can append it to the result and return 
+    - Runtime: O(4^n/sqrt(n))
+    - Space: O(4^n/sqrt(n))
+    """
+    ans = []
+    def backtrack(sequence, left, right):
+        if len(sequence) == 2 * n:
+            ans.append("".join(sequence))
+            return 
+        if left < n:
+            sequence.append("(")
+            backtrack(sequence, left + 1, right)
+            sequence.pop()
+        if right < left:
+            sequence.append(")")
+            backtrack(sequence, left, right + 1)
+            sequence.pop()  
+    backtrack([], 0, 0)
+    return ans
+
+###########################################################################################################################
+###########################################################################################################################
+
+def permute(nums):
+    """ Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
+
+    - Approach 1 (⭐):
+    - Use backtracking technique; for each letter, find all permutation for the rest of the list, and add the letter to each permutations. 
+    - Then, add the letter back to the list and choose the next letter to be the letter removed. 
+    - Runtime: <= O(N x N!) - for each k, perform N(N - 1)(N - 2)...(N - k + 1) operations
+    - Space: O(N!) - storing N! solutions   
+    """
+    result = []
+    if len(nums) == 1:
+        return [nums[:]]
+    for i in range(len(nums)):
+        x = nums.pop(0)
+        perms = permute(nums)
+        for perm in perms:
+            perm += [x]
+        result += perms
+        nums.append(x)
+    return result
+
+###########################################################################################################################
+###########################################################################################################################
+
+def subsets(nums):
+    """ Given an integer array nums of unique elements, return all possible subsets (the power set).
+
+    Approach 1 (⭐):
+    - Use the backtracking approach over all possible lengths, from 0 to n 
+    - Runtime: O(N x 2^N)
+    - Space: O(N)
+    """
+    def backtrack(start, curr):
+        ans.append(curr[:])
+        for i in range(start, n):
+            curr.append(nums[i])
+            backtrack(i + 1, curr)
+            curr.pop()
+    n = len(nums)
+    ans = []
+    backtrack(0, [])
+    return ans
+
+###########################################################################################################################
+###########################################################################################################################
+
+def exist(self, board, word):
+    """ Given an m x n grid of characters board and a string word, return true if word exists in the grid.
+
+    - Approach 1 (⭐):
+    - Run DFS on the graph, with all elements being possible starting points.
+    - In each backtrack call, check if the current element is in bounds and equals the next letter in suffix
+    - If so, then we can clear that element, dfs on the next layer, then restore the element (backtracking!)
+    - If any of those calls are True, we found a path
+    - Runtime: O(M x N x 3^L), where L is the length of the word to be matched
+    - Space: O(L) - the maximum length of the recursive stack is L 
+    """
+    self.board = board
+    for i in range(len(self.board)):
+        for j in range(len(self.board[0])):
+            if self.backtrack(i, j, word):
+                return True
+    return False
+
+def backtrack(self, i, j, suffix):
+    if len(suffix) == 0:
+        return True
+    if not (0 <= i < len(self.board)) or not (0 <= j < len(self.board[0])) or suffix[0] != self.board[i][j]:
+        return False
+    ret = False
+    self.board[i][j] = "#"
+    for di, dj in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+        ret = self.backtrack(i + di, j + dj, suffix[1:])
+        if ret: 
+            break
+    self.board[i][j] = suffix[0]
+    return ret
+
+###########################################################################################################################
+###########################################################################################################################
+
+def sort_colors(nums):
+    """ Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+    
+    - Approach 1 (⭐):
+    - Dutch National Flag Problem
+    - Maintain three pointers: right edge of 0's, curr element, and left edge of 2's
+    - If element is a 0 or 2, swap with curr
+    - If its a 1, just move curr forward
+    - Return when curr reaches the boundary of 2's
+    - Runtime: O(n)
+    - Space: O(1)
+    """
+    left = 0 
+    right = len(nums) - 1
+    curr = 0 
+    while curr <= right:
+        if nums[curr] == 0:
+            nums[left], nums[curr] = nums[curr], nums[left]
+            left += 1
+            curr += 1
+        elif nums[curr] == 2:
+            nums[right], nums[curr] = nums[curr], nums[right]
+            right -= 1
+        else:
+            curr += 1
+        
