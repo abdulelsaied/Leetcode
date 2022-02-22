@@ -26,5 +26,37 @@ Each problem includes the optimal solution (marked with a ⭐), along with it's 
 
 All problems done so far, including their Leetcode number, are listed below
 
-LC 1 Sort ...
+**Arrays and String**\
+LC1 3SUM/2SUM\
+Set Matrix Zeroes\
+Group Anagrams\
+Longest Substring Without Repeating Characters\
+Longest Palindroming Substring\
+Increasing Triplet Sequence\
+Mussing Ranges
+
+**Linked List**\
+Add Two Numbers\
+Odd Even Linked List\
+Intersection of Two Linked Lists
+
+**Trees and Graphs**\
+Binary Tree Inorder Traversal\
+Binary Tree Zigzag Level Order Traversal\
+Construct Binary Tree from Preorder and Inorder Traversal\
+Populating Next Right Pointers in Each Node\
+Kth Smallest Element in a BST\
+Inorder Successor in BST\
+Number of Islands
+
+**Backtracking**\
+Letter Combinations of a Phone Number\
+Generate Parentheses\
+Permutations\
+Subsets\
+Word Search
+
+**Sorting and Searching**\
+Sort Colors
+
 ...
